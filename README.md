@@ -39,4 +39,4 @@ $ npm run release
 $ npm run dev
 ```
 
-Open [http://localhost:8080/minio](http://localhost:8080/minio) in your browser to play with the application
+Open [http://localhost:8080/minio/](http://localhost:8080/minio/) in your browser to play with the application

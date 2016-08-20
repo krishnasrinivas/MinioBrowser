@@ -48,6 +48,25 @@ var exports = {
         loader: 'url'
       }]
   },
+  devServer: {
+    historyApiFallback: {
+      index: '/minio/'
+    },
+    proxy: {
+      '/minio/webrpc': {
+	target: 'http://localhost:9000',
+	secure: false
+      },
+      '/minio/upload/*': {
+	target: 'http://localhost:9000',
+	secure: false
+      },
+      '/minio/download/*': {
+	target: 'http://localhost:9000',
+	secure: false
+      },
+    }
+  },
   plugins: [
     new CopyWebpackPlugin([
       {from: 'app/css/loader.css'},
