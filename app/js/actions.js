@@ -297,23 +297,23 @@ export const uploadFile = (file, xhr) => {
       dispatch(stopUpload({slug}))
     })
 
+    xhr.upload.addEventListener('load', event => {
+      setShowAbortModal(false)
+      dispatch(stopUpload({slug}))
+      dispatch(showAlert({
+        type: 'success',
+        message: 'File \'' + file.name + '\' uploaded successfully.'
+      }))
+      dispatch(selectPrefix(currentPath))
+    })
+
     xhr.upload.addEventListener('progress', event => {
       if (event.lengthComputable) {
         let loaded = event.loaded
         let total = event.total
 
-        if (loaded === total) {
-          setShowAbortModal(false)
-          dispatch(stopUpload({slug}))
-          dispatch(showAlert({
-            type: 'success',
-            message: 'File \'' + file.name + '\' uploaded successfully.'
-          }))
-          dispatch(selectPrefix(currentPath))
-        } else {
-          // Update the counter.
-          dispatch(uploadProgress({slug, loaded}))
-        }
+        // Update the counter.
+        dispatch(uploadProgress({slug, loaded}))
       }
     })
     xhr.send(file)
