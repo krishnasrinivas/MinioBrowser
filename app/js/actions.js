@@ -289,22 +289,24 @@ export const uploadFile = (file, xhr) => {
     xhr.setRequestHeader('x-amz-date', Moment().utc().format('YYYYMMDDTHHmmss') + 'Z')
     dispatch(addUpload({slug, xhr, size: file.size, name: file.name}))
 
+    xhr.onload = function(event) {
+      if(xhr.status == 200) {
+	setShowAbortModal(false)
+	dispatch(stopUpload({slug}))
+	dispatch(showAlert({
+          type: 'success',
+          message: 'File \'' + file.name + '\' uploaded successfully.'
+	}))
+	dispatch(selectPrefix(currentPath))
+      }
+    }
+
     xhr.upload.addEventListener('error', event => {
       dispatch(showAlert({
         type: 'danger',
         message: 'Error occurred uploading \'' + file.name +'\'.'
       }))
       dispatch(stopUpload({slug}))
-    })
-
-    xhr.upload.addEventListener('load', event => {
-      setShowAbortModal(false)
-      dispatch(stopUpload({slug}))
-      dispatch(showAlert({
-        type: 'success',
-        message: 'File \'' + file.name + '\' uploaded successfully.'
-      }))
-      dispatch(selectPrefix(currentPath))
     })
 
     xhr.upload.addEventListener('progress', event => {
