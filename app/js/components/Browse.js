@@ -196,7 +196,7 @@ export default class Browse extends React.Component {
       const { web, dispatch, currentBucket, currentPath } = this.props
       web.RemoveObject({
         bucketName: currentBucket,
-        objectName: currentPath + object.name
+        objectName: object
       })
       .then(() => dispatch(actions.selectPrefix(currentPath)))
       .catch(e => dispatch(actions.showAlert({
@@ -425,7 +425,7 @@ export default class Browse extends React.Component {
                     </div>
 
                     <div className="feb-container">
-                        <ObjectsList dataType={this.dataType.bind(this)} selectPrefix={this.selectPrefix.bind(this)}/>
+                        <ObjectsList dataType={this.dataType.bind(this)} selectPrefix={this.selectPrefix.bind(this)} removeObject={this.removeObject.bind(this)}/>
                     </div>
 
                     <UploadModal />

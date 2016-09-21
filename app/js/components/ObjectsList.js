@@ -24,6 +24,10 @@ let ObjectsList = ({ objects, currentPath, selectPrefix, dataType, removeObject,
         let size = object.name.endsWith('/') ? '-' : humanize.filesize(object.size)
         let lastModified = object.name.endsWith('/') ? '-' : Moment(object.lastModified).format('lll')
         let loadingClass = loadPath === `${currentPath}${object.name}` ? 'fesl-loading' : ''
+        let deleteButton = ''
+        if (!object.name.endsWith('/')) {
+          deleteButton = <button className="btn btn-default" onClick={(e) => removeObject(e, `${currentPath}${object.name}`)} ><i className="fa fa-plus"></i></button>
+        }
         return (
             <div key={i} className={"fesl-row " + loadingClass} data-type={dataType(object.name, object.contentType)}>
 
@@ -36,6 +40,7 @@ let ObjectsList = ({ objects, currentPath, selectPrefix, dataType, removeObject,
                 </div>
                 <div className="fesl-item fi-size">{size}</div>
                 <div className="fesl-item fi-modified">{lastModified}</div>
+                {deleteButton}
             </div>
         )
     })
