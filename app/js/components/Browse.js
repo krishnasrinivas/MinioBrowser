@@ -38,6 +38,7 @@ import UploadModal from '../components/UploadModal'
 import SettingsModal from '../components/SettingsModal'
 import PolicyInput from '../components/PolicyInput'
 import Policy from '../components/Policy'
+import ConfirmModal from './ConfirmModal'
 
 import logo from '../../img/logo.svg'
 
@@ -194,13 +195,16 @@ export default class Browse extends React.Component {
         dispatch(actions.uploadFile(file, this.xhr))
     }
 
-    removeObject(e, object) {
-      const { web, dispatch, currentBucket, currentPath } = this.props
+    removeObject() {
+      const { web, dispatch, currentPath, currentBucket, deleteConfirmation } = this.props
       web.RemoveObject({
         bucketName: currentBucket,
-        objectName: currentPath + object.name
+        objectName: deleteConfirmation.object
       })
-      .then(() => dispatch(actions.selectPrefix(currentPath)))
+      .then(() =>{
+        this.hideDeleteConfirmation()
+        dispatch(actions.selectPrefix(currentPath))
+      })
       .catch(e => dispatch(actions.showAlert({
         type: 'danger',
         message: e.message
@@ -208,10 +212,19 @@ export default class Browse extends React.Component {
     }
 
     hideAlert(e) {
-        e.preventDefault()
+      e.preventDefault()
+      const { dispatch } = this.props
+      dispatch(actions.hideAlert())
+    }
 
-        const { dispatch } = this.props
-        dispatch(actions.hideAlert())
+    showDeleteConfirmation(e, object) {
+      const { dispatch } = this.props
+      dispatch(actions.showDeleteConfirmation(object))
+    }
+
+    hideDeleteConfirmation() {
+      const { dispatch } = this.props
+      dispatch(actions.hideDeleteConfirmation())
     }
 
     dataType(name, contentType) {
@@ -300,7 +313,8 @@ export default class Browse extends React.Component {
         const { version, memory, platform, runtime } = this.props.serverInfo
         const { sidebarStatus } = this.props
         const { showSettings } = this.props
-        const { policies, currentBucket } = this.props
+        const { policies, currentBucket, currentPath } = this.props
+        const { deleteConfirmation } = this.props
 
         // Don't always show the SettingsModal. This is done here instead of in
         // SettingsModal.js so as to allow for #componentWillMount to handle
@@ -429,7 +443,7 @@ export default class Browse extends React.Component {
                     </div>
 
                     <div className="feb-container">
-                        <ObjectsList dataType={this.dataType.bind(this)} selectPrefix={this.selectPrefix.bind(this)}/>
+                        <ObjectsList dataType={this.dataType.bind(this)} selectPrefix={this.selectPrefix.bind(this)} showDeleteConfirmation={this.showDeleteConfirmation.bind(this)}/>
                     </div>
 
                     <UploadModal />
@@ -519,9 +533,18 @@ export default class Browse extends React.Component {
                             <PolicyInput bucket={currentBucket} />
                             {policies.map(policy =>
                                 <Policy prefix={policy.prefix} policy={policy.policy} />
-                            })}
+                            )}
                         </div>
                     </Modal>
+
+                    <ConfirmModal
+                        show={deleteConfirmation.show}
+                        text="Are you sure you want to delete?"
+                        okText='Yes'
+                        cancelText='No'
+                        okHandler={this.removeObject.bind(this)}
+                        cancelHandler={this.hideDeleteConfirmation.bind(this)}>
+                    </ConfirmModal>
 
                     { settingsModal }
 

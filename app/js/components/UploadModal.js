@@ -71,6 +71,7 @@ class UploadModal extends React.Component {
 
             return (
                 <ConfirmModal
+                    show={true}
                     baseClass={baseClass}
                     text="Abort uploads in progress?"
                     okText='Abort'

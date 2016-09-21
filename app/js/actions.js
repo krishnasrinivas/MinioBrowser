@@ -54,6 +54,27 @@ export const REMOVE_POLICY = 'REMOVE_POLICY'
 export const READ_ONLY = 'readonly'
 export const WRITE_ONLY = 'writeonly'
 export const READ_WRITE = 'readwrite'
+export const DELETE_CONFIRMATION = 'DELETE_CONFIRMATION'
+
+export const showDeleteConfirmation = (object) => {
+  return {
+    type: DELETE_CONFIRMATION,
+    payload: {
+      object,
+      show: true
+    }
+  }
+}
+
+export const hideDeleteConfirmation = () => {
+  return {
+    type: DELETE_CONFIRMATION,
+    payload: {
+      object: '',
+      show: false
+    }
+  }
+}
 
 export const setLoginRedirectPath = (path) => {
   return {

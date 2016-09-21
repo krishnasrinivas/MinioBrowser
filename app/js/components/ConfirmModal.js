@@ -18,9 +18,9 @@ import React from 'react'
 import Modal from 'react-bootstrap/lib/Modal'
 import ModalBody from 'react-bootstrap/lib/ModalBody'
 
-let ConfirmModal = ({ baseClass, text, okText, okIcon, cancelText, cancelIcon, okHandler, cancelHandler }) => {
+let ConfirmModal = ({ baseClass, text, okText, okIcon, cancelText, cancelIcon, okHandler, cancelHandler, show }) => {
     return (
-        <Modal animation={false} show={true} className={baseClass}>
+        <Modal animation={false} show={show} className={baseClass}>
             <ModalBody>
                 <div className="cm-text">{text}</div>
                 <div className="cm-footer">
