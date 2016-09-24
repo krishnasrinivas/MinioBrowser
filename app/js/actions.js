@@ -54,6 +54,18 @@ export const UPDATE_POLICY = 'UPDATE_POLICY'
 export const READ_ONLY = 'readonly'
 export const WRITE_ONLY = 'writeonly'
 export const READ_WRITE = 'readwrite'
+export const SET_SHAREURL = 'SET_SHAREURL'
+
+export const setShareURL = (object) => (dispatch, getState) = {
+  const { currentBucket, web } = getState()
+  let host = location.host
+  let bucket = currentBucket
+
+  web.PresignedURL({host, bucket, object})
+     .then(obj => {
+
+     })
+}
 
 export const setLoginRedirectPath = (path) => {
   return {
