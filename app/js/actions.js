@@ -54,6 +54,7 @@ export const REMOVE_POLICY = 'REMOVE_POLICY'
 export const READ_ONLY = 'readonly'
 export const WRITE_ONLY = 'writeonly'
 export const READ_WRITE = 'readwrite'
+export const SET_SHARE_OBJECT = 'SET_SHARE_OBJECT'
 export const DELETE_CONFIRMATION = 'DELETE_CONFIRMATION'
 
 export const showDeleteConfirmation = (object) => {
@@ -74,6 +75,37 @@ export const hideDeleteConfirmation = () => {
       show: false
     }
   }
+}
+
+export const showShareObject = url => {
+  return {
+    type: SET_SHARE_OBJECT,
+    shareObject: {
+      url: url,
+      show: true
+    }
+  }
+}
+
+export const hideShareObject = () => {
+  return {
+    type: SET_SHARE_OBJECT,
+    shareObject: {
+      url: '',
+      show: false
+    }
+  }
+}
+
+export const shareObject = (object) => (dispatch, getState) => {
+  const { currentBucket, web } = getState()
+  let host = location.host
+  let bucket = currentBucket
+
+  web.PresignedURL({host, bucket, object})
+     .then(obj => {
+       showShareObject(obj.url)
+     })
 }
 
 export const setLoginRedirectPath = (path) => {

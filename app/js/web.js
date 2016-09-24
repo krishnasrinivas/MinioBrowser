@@ -87,10 +87,10 @@ export default class Web {
   ListObjects(args) {
     return this.makeCall('ListObjects', args)
   }
-  GetObjectURL(args) {
-    return this.makeCall('GetObjectURL', args)
+  PresignedGET(args) {
+    return this.makeCall('PresignedGET', args)
   }
-  PutObjectURL(args) {
+   PutObjectURL(args) {
     return this.makeCall('PutObjectURL', args)
   }
   RemoveObject(args) {

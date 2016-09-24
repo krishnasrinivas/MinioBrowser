@@ -315,6 +315,7 @@ export default class Browse extends React.Component {
         const { showSettings } = this.props
         const { policies, currentBucket, currentPath } = this.props
         const { deleteConfirmation } = this.props
+        const { shareObject } = this.props
 
         // Don't always show the SettingsModal. This is done here instead of in
         // SettingsModal.js so as to allow for #componentWillMount to handle
@@ -547,6 +548,10 @@ export default class Browse extends React.Component {
                         okHandler={this.removeObject.bind(this)}
                         cancelHandler={this.hideDeleteConfirmation.bind(this)}>
                     </ConfirmModal>
+
+                    <Modal show={shareObject.show}>
+                      {shareObject.url}
+                    </Modal>
 
                     { settingsModal }
 
