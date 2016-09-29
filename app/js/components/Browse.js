@@ -227,6 +227,17 @@ export default class Browse extends React.Component {
       dispatch(actions.hideDeleteConfirmation())
     }
 
+    shareObject(e, object) {
+      e.preventDefault()
+      const { dispatch } = this.props
+      dispatch(actions.shareObject(object))
+    }
+
+    hideShareObjectModal() {
+      const { dispatch } = this.props
+      dispatch(actions.hideShareObject())
+    }
+
     dataType(name, contentType) {
       return mime.getDataType(name, contentType)
     }
@@ -444,7 +455,8 @@ export default class Browse extends React.Component {
                     </div>
 
                     <div className="feb-container">
-                        <ObjectsList dataType={this.dataType.bind(this)} selectPrefix={this.selectPrefix.bind(this)} showDeleteConfirmation={this.showDeleteConfirmation.bind(this)}/>
+                        <ObjectsList dataType={this.dataType.bind(this)} selectPrefix={this.selectPrefix.bind(this)} showDeleteConfirmation={this.showDeleteConfirmation.bind(this)}
+                          shareObject={this.shareObject.bind(this)} />
                     </div>
 
                     <UploadModal />
@@ -549,8 +561,13 @@ export default class Browse extends React.Component {
                         cancelHandler={this.hideDeleteConfirmation.bind(this)}>
                     </ConfirmModal>
 
-                    <Modal show={shareObject.show}>
-                      {shareObject.url}
+                    <Modal show={shareObject.show} onHide={this.hideShareObjectModal.bind(this)}>
+                      <ModalHeader>
+                        Share URL
+                      </ModalHeader>
+                      <ModalBody>
+                        {shareObject.url}
+                      </ModalBody>
                     </Modal>
 
                     { settingsModal }

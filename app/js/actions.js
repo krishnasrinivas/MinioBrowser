@@ -102,9 +102,15 @@ export const shareObject = (object) => (dispatch, getState) => {
   let host = location.host
   let bucket = currentBucket
 
-  web.PresignedURL({host, bucket, object})
+  web.PresignedGET({host, bucket, object})
      .then(obj => {
-       showShareObject(obj.url)
+       dispatch(showShareObject(obj.url))
+     })
+     .catch(err => {
+       dispatch(showAlert({
+         type: 'danger',
+         message: err.message
+       }))
      })
 }
 

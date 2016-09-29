@@ -21,7 +21,7 @@ import connect from 'react-redux/lib/components/connect'
 import Dropdown from 'react-bootstrap/lib/Dropdown'
 
 
-let ObjectsList = ({ objects, currentPath, selectPrefix, dataType, showDeleteConfirmation, loadPath }) => {
+let ObjectsList = ({ objects, currentPath, selectPrefix, dataType, showDeleteConfirmation, shareObject, loadPath }) => {
     const list = objects.map((object, i) => {
         let size = object.name.endsWith('/') ? '-' : humanize.filesize(object.size)
         let lastModified = object.name.endsWith('/') ? '-' : Moment(object.lastModified).format('lll')
@@ -31,13 +31,10 @@ let ObjectsList = ({ objects, currentPath, selectPrefix, dataType, showDeleteCon
             actionButtons = <Dropdown id="fia-dropdown">
                               <Dropdown.Toggle noCaret className="fia-toggle"></Dropdown.Toggle>
                               <Dropdown.Menu>
-                                  <a href="" className="fiad-action" onClick={(e) => actions.shareObject(objectPath)} ><i className="fa fa-share"></i></a>
+                                  <a href="" className="fiad-action" onClick={(e) => shareObject(e, `${currentPath}${object.name}`)} ><i className="fa fa-share"></i></a>
                                   <a href="" className="fiad-action" onClick={(e) => showDeleteConfirmation(e, `${currentPath}${object.name}`)} ><i className="fa fa-trash-empty"></i></a>
                               </Dropdown.Menu>
                           </Dropdown>
-
-
-
         }
         return (
             <div key={i} className={"fesl-row " + loadingClass} data-type={dataType(object.name, object.contentType)}>
