@@ -87,8 +87,8 @@ export default class Web {
   ListObjects(args) {
     return this.makeCall('ListObjects', args)
   }
-  PresignedGET(args) {
-    return this.makeCall('PresignedGET', args)
+  PresignedGet(args) {
+    return this.makeCall('PresignedGet', args)
   }
    PutObjectURL(args) {
     return this.makeCall('PutObjectURL', args)

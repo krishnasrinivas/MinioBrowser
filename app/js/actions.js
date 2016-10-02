@@ -102,7 +102,7 @@ export const shareObject = (object) => (dispatch, getState) => {
   let host = location.host
   let bucket = currentBucket
 
-  web.PresignedGET({host, bucket, object})
+  web.PresignedGet({host, bucket, object})
      .then(obj => {
        dispatch(showShareObject(obj.url))
      })
