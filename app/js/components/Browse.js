@@ -187,8 +187,15 @@ export default class Browse extends React.Component {
 
     uploadFile(e) {
         e.preventDefault()
-        const { dispatch } = this.props
+        const { dispatch, buckets } = this.props
 
+        if (buckets.length === 0) {
+            dispatch(actions.showAlert({
+            type: 'danger',
+            message: "Bucket needs to be created before trying to upload files."
+	  }))
+	  return
+        }
         let file = e.target.files[0]
         e.target.value = null
         this.xhr = new XMLHttpRequest ()
