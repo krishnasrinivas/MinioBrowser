@@ -1,4 +1,4 @@
-import { READ_ONLY, WRITE_ONLY, READ_WRITE } from '../actions'
+import { READ_ONLY, WRITE_ONLY, READ_WRITE } from '../constants'
 
 import React, { Component, PropTypes } from 'react'
 import connect from 'react-redux/lib/components/connect'
@@ -25,7 +25,9 @@ class Policy extends Component {
           prefix: newPrefix,
           policy: 'none'
       })
-      .then(() => dispatch(actions.removePolicy(currentBucket, newPrefix)))
+      .then(() => {
+        dispatch(actions.setPolicies(this.props.policies.filter(policy => policy.prefix != prefix)))
+      })
       .catch(e => dispatch(actions.showAlert({
         type: 'danger',
         message: e.message,

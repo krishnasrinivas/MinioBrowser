@@ -50,11 +50,6 @@ export const SHOW_SETTINGS = 'SHOW_SETTINGS'
 export const SET_SETTINGS = 'SET_SETTINGS'
 export const SHOW_BUCKET_POLICY = 'SHOW_BUCKET_POLICY'
 export const SET_POLICIES = 'SET_POLICIES'
-export const ADD_POLICY = 'ADD_POLICY'
-export const REMOVE_POLICY = 'REMOVE_POLICY'
-export const READ_ONLY = 'readonly'
-export const WRITE_ONLY = 'writeonly'
-export const READ_WRITE = 'readwrite'
 export const SET_SHARE_OBJECT = 'SET_SHARE_OBJECT'
 export const DELETE_CONFIRMATION = 'DELETE_CONFIRMATION'
 
@@ -462,19 +457,5 @@ export const setPolicies = (policies) => {
     return {
         type: SET_POLICIES,
         policies
-    }
-}
-
-export const addPolicy = (bucket, prefix, policy) => {
-    return {
-        type: ADD_POLICY,
-        bucket, prefix, policy
-    }
-}
-
-export const removePolicy = (bucket, prefix) => {
-    return {
-        type: REMOVE_POLICY,
-        bucket, prefix
     }
 }

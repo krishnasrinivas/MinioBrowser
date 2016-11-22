@@ -126,18 +126,6 @@ export default (state = {buckets:[], visibleBuckets:[], objects:[], storageInfo:
       break
     case actions.SET_POLICIES:
       newState.policies = action.policies
-    case actions.ADD_POLICY:
-      newState.policies = [
-          {
-              policy: action.policy,
-              prefix: action.bucket+'/'+action.prefix+'*',
-          },
-          ...newState.policies]
-      break
-
-    case actions.REMOVE_POLICY:
-      let bucketPrefix = action.bucket+'/'+action.prefix+'*'
-      newState.policies = newState.policies.filter(policy => policy.prefix !== bucketPrefix)
       break
     case actions.DELETE_CONFIRMATION:
       newState.deleteConfirmation = Object.assign({}, action.payload)

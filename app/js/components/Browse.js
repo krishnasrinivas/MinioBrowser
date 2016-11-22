@@ -372,6 +372,7 @@ export default class Browse extends React.Component {
         let used = total - free
         let usedPercent = (used / total) * 100+'%'
         let freePercent = free * 100 / total
+
         return (
             <div className={classNames({'file-explorer': true, 'toggled': sidebarStatus})}>
                 <SideBar landingPage={this.landingPage.bind(this)}
@@ -560,8 +561,8 @@ export default class Browse extends React.Component {
 
                         <div className="pm-body">
                             <PolicyInput bucket={currentBucket} />
-                            {policies.map(policy =>
-                                <Policy prefix={policy.prefix} policy={policy.policy} />
+                            {policies.map((policy, i) =>
+                                <Policy key={i} prefix={policy.prefix} policy={policy.policy} />
                             )}
                         </div>
                     </Modal>

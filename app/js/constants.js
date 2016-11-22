@@ -18,3 +18,6 @@
 
 // minioBrowserPrefix absolute path.
 export const minioBrowserPrefix = '/minio'
+export const READ_ONLY = 'readonly'
+export const WRITE_ONLY = 'writeonly'
+export const READ_WRITE = 'readwrite'

@@ -1,23 +1,14 @@
-import { READ_ONLY, WRITE_ONLY, READ_WRITE } from '../actions'
+import { READ_ONLY, WRITE_ONLY, READ_WRITE } from '../constants'
 import React, { Component, PropTypes } from 'react'
 import connect from 'react-redux/lib/components/connect'
 import classnames from 'classnames'
 import * as actions from '../actions'
 
 class PolicyInput extends Component {
-  constructor(props, context) {
-      super(props, context)
-      this.state = {
-          bucket: this.props.bucket || '',
-          prefix: this.props.prefix || '',
-          policy: READ_ONLY
-      }
-  }
-
-  componentWillMount() {
+  componentDidMount() {
       const { web, dispatch } = this.props
       web.ListAllBucketPolicies({
-          bucketName: this.state.bucket
+          bucketName: this.props.currentBucket
       }).then(res => {
           let policies = res.policies
           if (policies) dispatch(actions.setPolicies(policies))
@@ -26,25 +17,29 @@ class PolicyInput extends Component {
       })
   }
 
-  componentWillUnmount() {}
-
-  handleBucketPrefixChange(e) {
-      this.setState({ prefix: e.target.value.trim() || '' })
-  }
-
-  handlePolicyChange(e) {
-      this.setState({ policy: e.target.value })
+  componentWillUnmount() {
+    const { dispatch } = this.props
+    dispatch(actions.setPolicies([]))
   }
 
   handlePolicySubmit(e) {
     e.preventDefault()
     const { web, dispatch } = this.props
+
+    if(!this.prefix.value) return
+
     web.SetBucketPolicy({
-        bucketName: this.state.bucket,
-        prefix: this.state.prefix,
-        policy: this.state.policy
+        bucketName: this.props.currentBucket,
+        prefix: this.prefix.value,
+        policy: this.policy.value
     })
-    .then(() => dispatch(actions.addPolicy(this.state.bucket, this.state.prefix, this.state.policy)))
+    .then(() => {
+      dispatch(actions.setPolicies([{
+        policy: this.policy.value,
+        prefix: this.prefix.value + '*',
+      }, ...this.props.policies]))
+      this.prefix.value = ''
+    })
     .catch(e => dispatch(actions.showAlert({
         type: 'danger',
         message: e.message,
@@ -56,16 +51,14 @@ class PolicyInput extends Component {
       <header className="pmb-list">
         <div className="pmbl-item">
           <input type="text"
+                 ref={prefix => this.prefix = prefix}
                  className="form-control"
-                 placeholder="Object name"
-                 editable={true}
-                 defaultValue={this.state.prefix}
-                 onChange={this.handleBucketPrefixChange.bind(this)} />
+                 placeholder="Prefix"
+                 editable={true} />
         </div>
 
         <div className="pmbl-item">
-          <select className="form-control" value={this.state.policy}
-                  onChange={this.handlePolicyChange.bind(this)}>
+          <select ref={policy => this.policy = policy} className="form-control">
             <option value={READ_ONLY}>Read Only</option>
             <option value={WRITE_ONLY}>Write Only</option>
             <option value={READ_WRITE}>Read and Write</option>
