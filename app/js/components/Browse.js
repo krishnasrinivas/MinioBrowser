@@ -581,7 +581,7 @@ export default class Browse extends React.Component {
                         <ModalBody>
                             <div className="copy-text">
                                 <label>Shareable Link</label>
-                                <input type="text" ref="copyTextInput" readOnly="readOnly" value={shareObject.url} onClick={this.selectTexts.bind(this)}/>
+                                <input type="text" ref="copyTextInput" readOnly="readOnly" value={window.location.protocol + '//' + shareObject.url} onClick={this.selectTexts.bind(this)}/>
                             </div>
                         </ModalBody>
 

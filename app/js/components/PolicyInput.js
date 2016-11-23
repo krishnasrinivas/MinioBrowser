@@ -26,8 +26,6 @@ class PolicyInput extends Component {
     e.preventDefault()
     const { web, dispatch } = this.props
 
-    if(!this.prefix.value) return
-
     web.SetBucketPolicy({
         bucketName: this.props.currentBucket,
         prefix: this.prefix.value,

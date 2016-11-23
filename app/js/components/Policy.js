@@ -39,11 +39,14 @@ class Policy extends Component {
     let newPrefix = prefix.replace(currentBucket+'/', '')
     newPrefix = newPrefix.replace('*', '')
 
+    if(!newPrefix) newPrefix = '*'
+
     return (
       <div className="pmb-list">
           <div className="pmbl-item">{newPrefix}</div>
           <div className="pmbl-item">
             <select className="form-control"
+                    disabled
                     value={policy}
                     onChange={this.handlePolicyChange.bind(this)}>
               <option value={READ_ONLY}>Read Only</option>
