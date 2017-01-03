@@ -339,11 +339,20 @@ export const uploadFile = (file, xhr) => {
 
     xhr.open('PUT', uploadUrl, true)
     xhr.withCredentials = false
-    xhr.setRequestHeader("Authorization", 'Bearer ' + storage.getItem('token'))
+    const token = storage.getItem('token')
+    if (token)  xhr.setRequestHeader("Authorization", 'Bearer ' + storage.getItem('token'))
     xhr.setRequestHeader('x-amz-date', Moment().utc().format('YYYYMMDDTHHmmss') + 'Z')
     dispatch(addUpload({slug, xhr, size: file.size, name: file.name}))
 
     xhr.onload = function(event) {
+      if(xhr.status == 401 || xhr.status == 403 || xhr.status == 500) {
+        setShowAbortModal(false)
+        dispatch(stopUpload({slug}))
+        dispatch(showAlert({
+            type: 'danger',
+            message: 'Unauthorized request.'
+        }))
+      }
       if(xhr.status == 200) {
           setShowAbortModal(false)
           dispatch(stopUpload({slug}))

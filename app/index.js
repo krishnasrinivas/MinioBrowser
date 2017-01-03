@@ -55,11 +55,25 @@ window.web = web
 
 store.dispatch(actions.setWeb(web))
 
-function authNeeded(nextState, replace) {
-  if (!web.LoggedIn()) {
-    store.dispatch(actions.setLoginRedirectPath(location.pathname))
-    replace(`${minioBrowserPrefix}/login`)
-    return
+function authNeeded(nextState, replace, cb) {
+  if (web.LoggedIn()) {
+    return cb()
+  }
+  if (location.pathname === minioBrowserPrefix || location.pathname === minioBrowserPrefix+'/') {
+    // If there are any readable buckets - should not redirect to login page.
+    web.ListBuckets()
+      .then(res => {
+        if (!res.buckets) {
+          replace(`${minioBrowserPrefix}/login`)
+        }
+        return cb()
+      })
+      .catch(err => {
+        replace(`${minioBrowserPrefix}/login`)
+        return cb()
+      })
+  } else {
+    cb()
   }
 }
 

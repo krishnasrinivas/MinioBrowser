@@ -38,6 +38,7 @@ import UploadModal from '../components/UploadModal'
 import SettingsModal from '../components/SettingsModal'
 import PolicyInput from '../components/PolicyInput'
 import Policy from '../components/Policy'
+import BrowserDropdown from '../components/BrowserDropdown'
 import ConfirmModal from './ConfirmModal'
 import logo from '../../img/logo.svg'
 import * as actions from '../actions'
@@ -50,6 +51,7 @@ import storage from 'local-storage-fallback'
 export default class Browse extends React.Component {
     componentDidMount() {
         const { web, dispatch, currentBucket } = this.props
+        if (!web.LoggedIn()) return
         web.StorageInfo()
             .then(res => {
                 let storageInfo = Object.assign({}, {
@@ -353,6 +355,7 @@ export default class Browse extends React.Component {
         const { policies, currentBucket, currentPath } = this.props
         const { deleteConfirmation } = this.props
         const { shareObject } = this.props
+        const { web } = this.props
 
         // Don't always show the SettingsModal. This is done here instead of in
         // SettingsModal.js so as to allow for #componentWillMount to handle
@@ -375,10 +378,33 @@ export default class Browse extends React.Component {
         let signoutTooltip = <Tooltip id="tt-sign-out">Sign out</Tooltip>
         let uploadTooltip = <Tooltip id="tt-upload-file">Upload file</Tooltip>
         let makeBucketTooltip = <Tooltip id="tt-create-bucket">Create bucket</Tooltip>
+        let loginButton = ''
+        let browserDropdownButton = ''
+        let storageUsageDetails = ''
 
         let used = total - free
         let usedPercent = (used / total) * 100+'%'
         let freePercent = free * 100 / total
+
+        if (web.LoggedIn()) {
+          browserDropdownButton = <BrowserDropdown fullScreen={this.fullScreen.bind(this)} showAbout={this.showAbout.bind(this)} showSettings={this.showSettings.bind(this)} logout={this.logout.bind(this)} />
+        } else {
+          loginButton = <a className='btn btn-danger' href='/minio/login'>Login</a>
+        }
+
+        if (web.LoggedIn()) {
+          storageUsageDetails =   <div className="feh-usage">
+                                      <div className="fehu-chart">
+                                          <div style={{width: usedPercent}}></div>
+                                      </div>
+
+                                      <ul>
+                                          <li>Used: {humanize.filesize(total - free)}</li>
+                                          <li className="pull-right">Free: {humanize.filesize(total - used)}</li>
+                                      </ul>
+                                  </div>
+
+        }
 
         return (
             <div className={classNames({'file-explorer': true, 'toggled': sidebarStatus})}>
@@ -406,50 +432,12 @@ export default class Browse extends React.Component {
 
                     <header className="fe-header">
                         <Path selectPrefix={this.selectPrefix.bind(this)}/>
-
-                        <div className="feh-usage">
-                            <div className="fehu-chart">
-                                <div style={{width: usedPercent}}></div>
-                            </div>
-
-                            <ul>
-                                <li>Used: {humanize.filesize(total - free)}</li>
-                                <li className="pull-right">Free: {humanize.filesize(total - used)}</li>
-                            </ul>
-                        </div>
+                        {storageUsageDetails}
 
                         <ul className="feh-actions">
                             <BrowserUpdate />
-                            <li>
-                                <Dropdown pullRight id="top-right-menu">
-                                    <Dropdown.Toggle noCaret>
-                                        <i className="fa fa-reorder"></i>
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu className="dropdown-menu-right">
-                                        <li>
-                                            <a target="_blank" href="https://github.com/minio/miniobrowser">Github <i className="fa fa-github"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="" onClick={this.fullScreen.bind(this)}>Fullscreen <i className="fa fa-expand"></i></a>
-                                        </li>
-                                        <li>
-                                            <a target="_blank" href="https://docs.minio.io/">Documentation <i className="fa fa-book"></i></a>
-                                        </li>
-                                        <li>
-                                            <a target="_blank" href="https://gitter.im/minio/minio">Ask for help <i className="fa fa-question-circle"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="" onClick={this.showAbout.bind(this)}>About <i className="fa fa-info-circle"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="" onClick={this.showSettings.bind(this)}>Settings <i className="fa fa-cog"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="" onClick={this.logout.bind(this)}>Sign Out <i className="fa fa-sign-out"></i></a>
-                                        </li>
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                            </li>
+                            {loginButton}
+                            {browserDropdownButton}
                         </ul>
                     </header>
                     <div className="feb-container">
