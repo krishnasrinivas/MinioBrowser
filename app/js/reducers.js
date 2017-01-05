@@ -24,7 +24,7 @@ export default (state = {buckets:[], visibleBuckets:[], objects:[], storageInfo:
                 latestUiVersion: currentUiVersion, sideBarActive: false,
                 loginRedirectPath: minioBrowserPrefix, settings: {accessKey:'', secretKey: '', secretKeyVisible: false},
                 showSettings: false, policies: [], deleteConfirmation: {object: '', show: false},
-                shareObject: {show: false, url:'', expiry: 604800} }, action) => {
+                shareObject: {show: false, url:'', expiry: 604800}, prefixWritable: false }, action) => {
   let newState = Object.assign({}, state)
   switch (action.type) {
     case actions.SET_WEB:
@@ -133,6 +133,9 @@ export default (state = {buckets:[], visibleBuckets:[], objects:[], storageInfo:
       break
     case actions.SET_SHARE_OBJECT:
       newState.shareObject = Object.assign({}, action.shareObject)
+      break
+    case actions.SET_PREFIX_WRITABLE:
+      newState.prefixWritable = action.prefixWritable
       break
   }
   return newState

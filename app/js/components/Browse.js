@@ -81,19 +81,21 @@ export default class Browse extends React.Component {
       const { dispatch } = this.props
       // Clear out any stale message in the alert of Login page
       dispatch(actions.showAlert({type: 'danger', message: ''}))
-      web.ListBuckets()
-          .then(res => {
-            let buckets
-            if (!res.buckets) buckets = []
-            else buckets = res.buckets.map(bucket => bucket.name)
-            if (buckets.length) {
-              dispatch(actions.setBuckets(buckets))
-              dispatch(actions.setVisibleBuckets(buckets))
-              if (location.pathname === minioBrowserPrefix || location.pathname === minioBrowserPrefix + '/') {
-                browserHistory.push(utils.pathJoin(buckets[0]))
+      if (web.LoggedIn()) {
+        web.ListBuckets()
+            .then(res => {
+              let buckets
+              if (!res.buckets) buckets = []
+              else buckets = res.buckets.map(bucket => bucket.name)
+              if (buckets.length) {
+                dispatch(actions.setBuckets(buckets))
+                dispatch(actions.setVisibleBuckets(buckets))
+                if (location.pathname === minioBrowserPrefix || location.pathname === minioBrowserPrefix + '/') {
+                  browserHistory.push(utils.pathJoin(buckets[0]))
+                }
               }
-            }
-          })
+            })
+      }
       this.history = browserHistory.listen(({pathname}) => {
         let decPathname = decodeURI(pathname)
         if (decPathname === `${minioBrowserPrefix}/login`) return // FIXME: better organize routes and remove this
@@ -105,6 +107,10 @@ export default class Browse extends React.Component {
           return
         }
         let obj = utils.pathSlice(decPathname)
+        if (!web.LoggedIn()) {
+          dispatch(actions.setBuckets([obj.bucket]))
+          dispatch(actions.setVisibleBuckets([obj.bucket]))
+        }
         dispatch(actions.selectBucket(obj.bucket, obj.prefix))
       })
     }
@@ -355,7 +361,7 @@ export default class Browse extends React.Component {
         const { policies, currentBucket, currentPath } = this.props
         const { deleteConfirmation } = this.props
         const { shareObject } = this.props
-        const { web } = this.props
+        const { web, prefixWritable } = this.props
 
         // Don't always show the SettingsModal. This is done here instead of in
         // SettingsModal.js so as to allow for #componentWillMount to handle
@@ -403,6 +409,52 @@ export default class Browse extends React.Component {
                                           <li className="pull-right">Free: {humanize.filesize(total - used)}</li>
                                       </ul>
                                   </div>
+
+        }
+
+        let createButton = ''
+        if (web.LoggedIn()) {
+          createButton =   <Dropdown dropup className="feb-actions" id="fe-action-toggle">
+                              <Dropdown.Toggle noCaret className="feba-toggle">
+                                  <span><i className="fa fa-plus"></i></span>
+                              </Dropdown.Toggle>
+                              <Dropdown.Menu>
+                                  <OverlayTrigger placement="left" overlay={uploadTooltip}>
+                                      <a href="#" className="feba-btn feba-upload">
+                                          <input type="file" onChange={this.uploadFile.bind(this)} style={{display:'none'}}
+                                                 id="file-input"></input>
+                                          <label htmlFor="file-input">
+                                              <i className="fa fa-cloud-upload"></i>
+                                          </label>
+                                      </a>
+                                  </OverlayTrigger>
+                                  <OverlayTrigger placement="left" overlay={makeBucketTooltip}>
+                                      <a href="#" className="feba-btn feba-bucket"
+                                         onClick={this.showMakeBucketModal.bind(this)}>
+                                          <i className="fa fa-hdd-o"></i>
+                                      </a>
+                                  </OverlayTrigger>
+                              </Dropdown.Menu>
+                          </Dropdown>
+
+        } else {
+          if (prefixWritable)
+          createButton =   <Dropdown dropup className="feb-actions" id="fe-action-toggle">
+                              <Dropdown.Toggle noCaret className="feba-toggle">
+                                  <span><i className="fa fa-plus"></i></span>
+                              </Dropdown.Toggle>
+                              <Dropdown.Menu>
+                                  <OverlayTrigger placement="left" overlay={uploadTooltip}>
+                                      <a href="#" className="feba-btn feba-upload">
+                                          <input type="file" onChange={this.uploadFile.bind(this)} style={{display:'none'}}
+                                                 id="file-input"></input>
+                                          <label htmlFor="file-input">
+                                              <i className="fa fa-cloud-upload"></i>
+                                          </label>
+                                      </a>
+                                  </OverlayTrigger>
+                              </Dropdown.Menu>
+                          </Dropdown>
 
         }
 
@@ -479,29 +531,7 @@ export default class Browse extends React.Component {
                     </div>
 
                     <UploadModal />
-
-                    <Dropdown dropup className="feb-actions" id="fe-action-toggle">
-                        <Dropdown.Toggle noCaret className="feba-toggle">
-                            <span><i className="fa fa-plus"></i></span>
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                            <OverlayTrigger placement="left" overlay={uploadTooltip}>
-                                <a href="#" className="feba-btn feba-upload">
-                                    <input type="file" onChange={this.uploadFile.bind(this)} style={{display:'none'}}
-                                           id="file-input"></input>
-                                    <label htmlFor="file-input">
-                                        <i className="fa fa-cloud-upload"></i>
-                                    </label>
-                                </a>
-                            </OverlayTrigger>
-                            <OverlayTrigger placement="left" overlay={makeBucketTooltip}>
-                                <a href="#" className="feba-btn feba-bucket"
-                                   onClick={this.showMakeBucketModal.bind(this)}>
-                                    <i className="fa fa-hdd-o"></i>
-                                </a>
-                            </OverlayTrigger>
-                        </Dropdown.Menu>
-                    </Dropdown>
+                    {createButton}
 
                     <Modal className="modal-create-bucket" bsSize="small" animation={false} show={showMakeBucketModal} onHide={this.hideMakeBucketModal.bind(this)}>
                         <button className="close close-alt" onClick={this.hideMakeBucketModal.bind(this)}><span>&times;</span></button>

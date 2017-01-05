@@ -52,6 +52,7 @@ export const SHOW_BUCKET_POLICY = 'SHOW_BUCKET_POLICY'
 export const SET_POLICIES = 'SET_POLICIES'
 export const SET_SHARE_OBJECT = 'SET_SHARE_OBJECT'
 export const DELETE_CONFIRMATION = 'DELETE_CONFIRMATION'
+export const SET_PREFIX_WRITABLE = 'SET_PREFIX_WRITABLE'
 
 export const showDeleteConfirmation = (object) => {
   return {
@@ -247,6 +248,13 @@ export const setServerInfo = serverInfo => {
   }
 }
 
+const setPrefixWritable = prefixWritable => {
+  return {
+    type: SET_PREFIX_WRITABLE,
+    prefixWritable,
+  }
+}
+
 export const selectBucket = (newCurrentBucket, prefix) => {
   if (!prefix) prefix = ''
   return (dispatch, getState) => {
@@ -274,6 +282,7 @@ export const selectPrefix = prefix => {
               object.name = object.name.replace(`${prefix}`, ''); return object
             }))
         ))
+        dispatch(setPrefixWritable(res.writable))
         dispatch(setSortNameOrder(false))
         dispatch(setCurrentPath(prefix))
         dispatch(setLoadBucket(''))

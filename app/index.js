@@ -60,21 +60,9 @@ function authNeeded(nextState, replace, cb) {
     return cb()
   }
   if (location.pathname === minioBrowserPrefix || location.pathname === minioBrowserPrefix+'/') {
-    // If there are any readable buckets - should not redirect to login page.
-    web.ListBuckets()
-      .then(res => {
-        if (!res.buckets) {
-          replace(`${minioBrowserPrefix}/login`)
-        }
-        return cb()
-      })
-      .catch(err => {
-        replace(`${minioBrowserPrefix}/login`)
-        return cb()
-      })
-  } else {
-    cb()
+      replace(`${minioBrowserPrefix}/login`)
   }
+  return cb()
 }
 
 function authNotNeeded(nextState, replace) {
