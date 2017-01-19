@@ -99,6 +99,10 @@ export const shareObject = (object, expiry) => (dispatch, getState) => {
   let host = location.host
   let bucket = currentBucket
 
+  if (!web.LoggedIn()) {
+    dispatch(showShareObject(`${host}/${bucket}/${object}`))
+    return
+  }
   web.PresignedGet({host, bucket, object, expiry})
      .then(obj => {
        dispatch(showShareObject(obj.url))

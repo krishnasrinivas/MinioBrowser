@@ -612,7 +612,7 @@ export default class Browse extends React.Component {
                                 <input type="text" ref="copyTextInput" readOnly="readOnly" value={window.location.protocol + '//' + shareObject.url} onClick={this.selectTexts.bind(this)}/>
                             </div>
 
-                            <div className="input-group">
+                            <div className="input-group" style={{display: web.LoggedIn() ? 'block': 'none'}}>
                                 <label>Expires in</label>
 
                                 <div className="set-expire">

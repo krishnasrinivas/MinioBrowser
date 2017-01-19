@@ -27,12 +27,15 @@ let ObjectsList = ({ objects, currentPath, selectPrefix, dataType, showDeleteCon
         let lastModified = object.name.endsWith('/') ? '-' : Moment(object.lastModified).format('lll')
         let loadingClass = loadPath === `${currentPath}${object.name}` ? 'fesl-loading' : ''
         let actionButtons = ''
+        let deleteButton = ''
+        if (web.LoggedIn())
+	  deleteButton = <a href="" className="fiad-action" onClick={(e) => showDeleteConfirmation(e, `${currentPath}${object.name}`)} ><i className="fa fa-trash"></i></a>
         if (!object.name.endsWith('/')) {
             actionButtons = <Dropdown id="fia-dropdown">
                               <Dropdown.Toggle noCaret className="fia-toggle"></Dropdown.Toggle>
                               <Dropdown.Menu>
                                   <a href="" className="fiad-action" onClick={(e) => shareObject(e, `${currentPath}${object.name}`)} ><i className="fa fa-copy"></i></a>
-                                  <a href="" className="fiad-action" onClick={(e) => showDeleteConfirmation(e, `${currentPath}${object.name}`)} ><i className="fa fa-trash"></i></a>
+                                  {deleteButton}
                               </Dropdown.Menu>
                           </Dropdown>
         }

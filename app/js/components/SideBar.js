@@ -46,7 +46,7 @@ let SideBar = ({ visibleBuckets, loadBucket, currentBucket, selectBucket, search
                 </div>
 
                 <div className="fes-list">
-                    <div className="input-group ig-dark ig-left ig-search">
+                    <div className="input-group ig-dark ig-left ig-search" style={{display: web.LoggedIn() ? 'block' : 'none'}}>
                         <input className="ig-text" type="text" onChange={searchBuckets} placeholder="Search Buckets..."/>
                         <i className="ig-helpers"></i>
                     </div>
