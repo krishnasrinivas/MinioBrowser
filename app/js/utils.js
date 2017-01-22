@@ -40,7 +40,8 @@ export const sortObjectsBySize = (objects, order) => {
   let folders = objects.filter(object => object.name.endsWith('/'))
   let files = objects.filter(object => !object.name.endsWith('/'))
   files = files.sort((a, b) => a.size - b.size)
-  if (order) files = files.reverse()
+  if (order)
+    files = files.reverse()
   return [...folders, ...files]
 }
 
@@ -48,7 +49,8 @@ export const sortObjectsByDate = (objects, order) => {
   let folders = objects.filter(object => object.name.endsWith('/'))
   let files = objects.filter(object => !object.name.endsWith('/'))
   files = files.sort((a, b) => new Date(a.lastModified).getTime() - new Date(b.lastModified).getTime())
-  if (order) files = files.reverse()
+  if (order)
+    files = files.reverse()
   return [...folders, ...files]
 }
 
@@ -56,18 +58,28 @@ export const pathSlice = (path) => {
   path = path.replace(minioBrowserPrefix, '')
   let prefix = ''
   let bucket = ''
-  if (!path) return {bucket, prefix}
+  if (!path) return {
+      bucket,
+      prefix
+  }
   let objectIndex = path.indexOf('/', 1)
   if (objectIndex == -1) {
     bucket = path.slice(1)
-    return {bucket, prefix}
+    return {
+      bucket,
+      prefix
+    }
   }
   bucket = path.slice(1, objectIndex)
   prefix = path.slice(objectIndex + 1)
-  return {bucket, prefix}
+  return {
+    bucket,
+    prefix
+  }
 }
 
 export const pathJoin = (bucket, prefix) => {
-  if (!prefix) prefix = ''
+  if (!prefix)
+    prefix = ''
   return minioBrowserPrefix + '/' + bucket + '/' + prefix
 }

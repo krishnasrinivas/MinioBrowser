@@ -95,7 +95,7 @@ export const hideShareObject = () => {
 }
 
 export const shareObject = (object, expiry) => (dispatch, getState) => {
-  const { currentBucket, web } = getState()
+  const {currentBucket, web} = getState()
   let host = location.host
   let bucket = currentBucket
 
@@ -103,16 +103,21 @@ export const shareObject = (object, expiry) => (dispatch, getState) => {
     dispatch(showShareObject(`${host}/${bucket}/${object}`))
     return
   }
-  web.PresignedGet({host, bucket, object, expiry})
-     .then(obj => {
-       dispatch(showShareObject(obj.url))
-     })
-     .catch(err => {
-       dispatch(showAlert({
-         type: 'danger',
-         message: err.message
-       }))
-     })
+  web.PresignedGet({
+    host,
+    bucket,
+    object,
+    expiry
+  })
+    .then(obj => {
+      dispatch(showShareObject(obj.url))
+    })
+    .catch(err => {
+      dispatch(showAlert({
+        type: 'danger',
+        message: err.message
+      }))
+    })
 }
 
 export const setLoginRedirectPath = (path) => {
@@ -182,7 +187,9 @@ export const showAlert = alert => {
       alertTimeout = setTimeout(() => {
         dispatch({
           type: SET_ALERT,
-          alert: {show: false}
+          alert: {
+            show: false
+          }
         })
       }, 5000)
     }
@@ -260,7 +267,8 @@ const setPrefixWritable = prefixWritable => {
 }
 
 export const selectBucket = (newCurrentBucket, prefix) => {
-  if (!prefix) prefix = ''
+  if (!prefix)
+    prefix = ''
   return (dispatch, getState) => {
     let web = getState().web
     let currentBucket = getState().currentBucket
@@ -275,16 +283,20 @@ export const selectBucket = (newCurrentBucket, prefix) => {
 
 export const selectPrefix = prefix => {
   return (dispatch, getState) => {
-    const { currentBucket, web } = getState()
+    const {currentBucket, web} = getState()
     dispatch(setLoadPath(prefix))
-    web.ListObjects({bucketName: currentBucket, prefix})
+    web.ListObjects({
+      bucketName: currentBucket,
+      prefix
+    })
       .then(res => {
         let objects = res.objects
-        if (!objects) objects = []
+        if (!objects)
+          objects = []
         dispatch(setObjects(
           utils.sortObjectsByName(objects.map(object => {
-              object.name = object.name.replace(`${prefix}`, ''); return object
-            }))
+            object.name = object.name.replace(`${prefix}`, ''); return object
+          }))
         ))
         dispatch(setPrefixWritable(res.writable))
         dispatch(setSortNameOrder(false))
@@ -293,12 +305,12 @@ export const selectPrefix = prefix => {
         dispatch(setLoadPath(''))
       })
       .catch(err => {
-        dispatch (showAlert ({
+        dispatch(showAlert({
           type: 'danger',
           message: err.message
         }))
-        dispatch (setLoadBucket(''))
-        dispatch (setLoadPath(''))
+        dispatch(setLoadBucket(''))
+        dispatch(setLoadPath(''))
       })
   }
 }
@@ -344,7 +356,7 @@ export const setLoginError = () => {
 
 export const uploadFile = (file, xhr) => {
   return (dispatch, getState) => {
-    const { currentBucket, currentPath } = getState()
+    const {currentBucket, currentPath} = getState()
     const objectName = `${currentPath}${file.name}`
     const uploadUrl = `${window.location.origin}/minio/upload/${currentBucket}/${objectName}`
     // The slug is a unique identifer for the file upload.
@@ -353,36 +365,47 @@ export const uploadFile = (file, xhr) => {
     xhr.open('PUT', uploadUrl, true)
     xhr.withCredentials = false
     const token = storage.getItem('token')
-    if (token)  xhr.setRequestHeader("Authorization", 'Bearer ' + storage.getItem('token'))
+    if (token) xhr.setRequestHeader("Authorization", 'Bearer ' + storage.getItem('token'))
     xhr.setRequestHeader('x-amz-date', Moment().utc().format('YYYYMMDDTHHmmss') + 'Z')
-    dispatch(addUpload({slug, xhr, size: file.size, name: file.name}))
+    dispatch(addUpload({
+      slug,
+      xhr,
+      size: file.size,
+      name: file.name
+    }))
 
     xhr.onload = function(event) {
-      if(xhr.status == 401 || xhr.status == 403 || xhr.status == 500) {
+      if (xhr.status == 401 || xhr.status == 403 || xhr.status == 500) {
         setShowAbortModal(false)
-        dispatch(stopUpload({slug}))
+        dispatch(stopUpload({
+          slug
+        }))
         dispatch(showAlert({
-            type: 'danger',
-            message: 'Unauthorized request.'
+          type: 'danger',
+          message: 'Unauthorized request.'
         }))
       }
-      if(xhr.status == 200) {
-          setShowAbortModal(false)
-          dispatch(stopUpload({slug}))
-          dispatch(showAlert({
-              type: 'success',
-              message: 'File \'' + file.name + '\' uploaded successfully.'
-          }))
-          dispatch(selectPrefix(currentPath))
+      if (xhr.status == 200) {
+        setShowAbortModal(false)
+        dispatch(stopUpload({
+          slug
+        }))
+        dispatch(showAlert({
+          type: 'success',
+          message: 'File \'' + file.name + '\' uploaded successfully.'
+        }))
+        dispatch(selectPrefix(currentPath))
       }
     }
 
     xhr.upload.addEventListener('error', event => {
       dispatch(showAlert({
         type: 'danger',
-        message: 'Error occurred uploading \'' + file.name +'\'.'
+        message: 'Error occurred uploading \'' + file.name + '\'.'
       }))
-      dispatch(stopUpload({slug}))
+      dispatch(stopUpload({
+        slug
+      }))
     })
 
     xhr.upload.addEventListener('progress', event => {
@@ -391,7 +414,10 @@ export const uploadFile = (file, xhr) => {
         let total = event.total
 
         // Update the counter.
-        dispatch(uploadProgress({slug, loaded}))
+        dispatch(uploadProgress({
+          slug,
+          loaded
+        }))
       }
     })
     xhr.send(file)
@@ -427,57 +453,57 @@ export const setSortSizeOrder = (sortSizeOrder) => {
 }
 
 export const setSortDateOrder = (sortDateOrder) => {
-    return {
-        type: SET_SORT_DATE_ORDER,
-        sortDateOrder
-    }
+  return {
+    type: SET_SORT_DATE_ORDER,
+    sortDateOrder
+  }
 }
 
 export const setLatestUIVersion = (latestUiVersion) => {
-    return {
-        type: SET_LATEST_UI_VERSION,
-        latestUiVersion
-    }
+  return {
+    type: SET_LATEST_UI_VERSION,
+    latestUiVersion
+  }
 }
 
 export const showSettings = () => {
-    return {
-        type: SHOW_SETTINGS,
-        showSettings: true
-    }
+  return {
+    type: SHOW_SETTINGS,
+    showSettings: true
+  }
 }
 
 export const hideSettings = () => {
-    return {
-        type: SHOW_SETTINGS,
-        showSettings: false
-    }
+  return {
+    type: SHOW_SETTINGS,
+    showSettings: false
+  }
 }
 
 export const setSettings = (settings) => {
-    return {
-        type: SET_SETTINGS,
-        settings
-    }
+  return {
+    type: SET_SETTINGS,
+    settings
+  }
 }
 
 export const showBucketPolicy = () => {
-    return {
-        type: SHOW_BUCKET_POLICY,
-        showBucketPolicy: true
-    }
+  return {
+    type: SHOW_BUCKET_POLICY,
+    showBucketPolicy: true
+  }
 }
 
 export const hideBucketPolicy = () => {
-    return {
-        type: SHOW_BUCKET_POLICY,
-        showBucketPolicy: false
-    }
+  return {
+    type: SHOW_BUCKET_POLICY,
+    showBucketPolicy: false
+  }
 }
 
 export const setPolicies = (policies) => {
-    return {
-        type: SET_POLICIES,
-        policies
-    }
+  return {
+    type: SET_POLICIES,
+    policies
+  }
 }

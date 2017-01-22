@@ -20,7 +20,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import thunkMiddleware from 'redux-thunk'
 import createStore from 'redux/lib/createStore'
-import applyMiddleware  from 'redux/lib/applyMiddleware'
+import applyMiddleware from 'redux/lib/applyMiddleware'
 
 import Route from 'react-router/lib/Route'
 import Router from 'react-router/lib/Router'
@@ -59,8 +59,8 @@ function authNeeded(nextState, replace, cb) {
   if (web.LoggedIn()) {
     return cb()
   }
-  if (location.pathname === minioBrowserPrefix || location.pathname === minioBrowserPrefix+'/') {
-      replace(`${minioBrowserPrefix}/login`)
+  if (location.pathname === minioBrowserPrefix || location.pathname === minioBrowserPrefix + '/') {
+    replace(`${minioBrowserPrefix}/login`)
   }
   return cb()
 }
@@ -72,42 +72,45 @@ function authNotNeeded(nextState, replace) {
 }
 
 const App = (props) => {
-  return  <div>
-            {props.children}
-          </div>
+  return <div>
+           { props.children }
+         </div>
 }
 
 ReactDOM.render((
-  <Provider store={store} web={web}>
-    <Router history={browserHistory}>
-      <Route path='/' component={App}>
-        <Route path='minio' component={App}>
-          <IndexRoute component={Browse} onEnter={authNeeded} />
-          <Route path='login' component={Login} onEnter={authNotNeeded} />
-          <Route path=':bucket' component={Browse} onEnter={authNeeded} />
-          <Route path=':bucket/*' component={Browse} onEnter={authNeeded} />
+  <Provider store={ store } web={ web }>
+    <Router history={ browserHistory }>
+      <Route path='/' component={ App }>
+        <Route path='minio' component={ App }>
+          <IndexRoute component={ Browse } onEnter={ authNeeded } />
+          <Route path='login' component={ Login } onEnter={ authNotNeeded } />
+          <Route path=':bucket' component={ Browse } onEnter={ authNeeded } />
+          <Route path=':bucket/*' component={ Browse } onEnter={ authNeeded } />
         </Route>
       </Route>
     </Router>
   </Provider>
-), document.getElementById('root'))
+  ), document.getElementById('root'))
 
 //Page loader
 let delay = [0, 400]
 let i = 0
 
 function handleLoader() {
-    if(i < 2) {
-        setTimeout(function () {
-            document.querySelector('.page-load').classList.add('pl-'+i)
-            i++
-            handleLoader()
-        }, delay[i])
-    }
+  if (i < 2) {
+    setTimeout(function() {
+      document.querySelector('.page-load').classList.add('pl-' + i)
+      i++
+      handleLoader()
+    }, delay[i])
+  }
 }
 handleLoader()
 
 if (storage.getItem('newlyUpdated')) {
-  store.dispatch(actions.showAlert({type: 'success', message: "Updated to the latest UI Version."}))
+  store.dispatch(actions.showAlert({
+    type: 'success',
+    message: "Updated to the latest UI Version."
+  }))
   storage.removeItem('newlyUpdated')
 }

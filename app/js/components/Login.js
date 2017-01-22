@@ -22,113 +22,112 @@ import * as actions from '../actions'
 import InputGroup from '../components/InputGroup'
 
 export default class Login extends React.Component {
-    handleSubmit(event) {
-        event.preventDefault()
-        const { web, dispatch, loginRedirectPath } = this.props
-        let message = ''
-        if (!document.getElementById('accessKey').value) {
-            message = 'Secret Key cannot be empty'
-        }
-        if (!document.getElementById('secretKey').value) {
-            message = 'Access Key cannot be empty'
-        }
-        if (message) {
-            dispatch(actions.showAlert({
-                type: 'danger',
-                message
-            }))
-            return
-        }
-        web.Login({username: document.getElementById('accessKey').value, password: document.getElementById('secretKey').value})
-            .then((res) => {
-                this.context.router.push(loginRedirectPath)
-            })
-            .catch(e => {
-                dispatch(actions.setLoginError())
-                dispatch(actions.showAlert({
-                    type: 'danger',
-                    message: e.message
-                }))
-            })
+  handleSubmit(event) {
+    event.preventDefault()
+    const {web, dispatch, loginRedirectPath} = this.props
+    let message = ''
+    if (!document.getElementById('accessKey').value) {
+      message = 'Secret Key cannot be empty'
     }
-
-    componentWillMount() {
-        const { dispatch } = this.props
-        // Clear out any stale message in the alert of previous page
-        dispatch(actions.showAlert({type: 'danger', message: ''}))
-        document.body.classList.add('is-guest')
+    if (!document.getElementById('secretKey').value) {
+      message = 'Access Key cannot be empty'
     }
-
-    componentWillUnmount() {
-        document.body.classList.remove('is-guest')
+    if (message) {
+      dispatch(actions.showAlert({
+        type: 'danger',
+        message
+      }))
+      return
     }
+    web.Login({
+      username: document.getElementById('accessKey').value,
+      password: document.getElementById('secretKey').value
+    })
+      .then((res) => {
+        this.context.router.push(loginRedirectPath)
+      })
+      .catch(e => {
+        dispatch(actions.setLoginError())
+        dispatch(actions.showAlert({
+          type: 'danger',
+          message: e.message
+        }))
+      })
+  }
 
-    hideAlert() {
-        const { dispatch } = this.props
-        dispatch(actions.hideAlert())
-    }
+  componentWillMount() {
+    const {dispatch} = this.props
+    // Clear out any stale message in the alert of previous page
+    dispatch(actions.showAlert({
+      type: 'danger',
+      message: ''
+    }))
+    document.body.classList.add('is-guest')
+  }
 
-    render() {
-        const { alert } = this.props
-        let alertBox = <Alert className={'alert animated ' + (alert.show ? 'fadeInDown' : 'fadeOutUp')} bsStyle={alert.type}
-                              onDismiss={this.hideAlert.bind(this)}>
-            <div className='text-center'>{alert.message}</div>
-        </Alert>
-        // Make sure you don't show a fading out alert box on the initial web-page load.
-        if (!alert.message) alertBox = ''
-        return (
-            <div className="login">
-                {alertBox}
-                <div className="l-wrap">
-                    <form onSubmit={this.handleSubmit.bind(this)}>
-                        <input name="fixBrowser" autoComplete="username" type="text" style={{display: 'none'}}/>
+  componentWillUnmount() {
+    document.body.classList.remove('is-guest')
+  }
 
-                        <InputGroup
-                            className="ig-dark"
-                            label="Access Key"
-                            id="accessKey"
-                            name="username"
-                            type="text"
-                            spellCheck="false"
-                            required="required"
-                            autoComplete="username">
+  hideAlert() {
+    const {dispatch} = this.props
+    dispatch(actions.hideAlert())
+  }
 
-                        </InputGroup>
-
-                        <input type="text" autoComplete="new-password" style={{ display: 'none' }}/>
-
-                        <InputGroup
-                            className="ig-dark"
-                            label="Secret Key"
-                            id="secretKey"
-                            name="password"
-                            type="password"
-                            spellCheck="false"
-                            required="required"
-                            autoComplete="new-password">
-
-                        </InputGroup>
-
-                        <button className="lw-btn" type="submit">
-                            <i className="fa fa-sign-in"></i>
-                        </button>
-                    </form>
-                </div>
-
-                <div className="l-footer">
-                    <a className="lf-logo" href="">
-                        <img src={logo} alt=""/>
-                    </a>
-
-                    <div className="lf-server">
-                        {window.location.host}
-                    </div>
-                </div>
-            </div>
-        )
-    }
+  render() {
+    const {alert} = this.props
+    let alertBox = <Alert className={ 'alert animated ' + (alert.show ? 'fadeInDown' : 'fadeOutUp') } bsStyle={ alert.type } onDismiss={ this.hideAlert.bind(this) }>
+                     <div className='text-center'>
+                       { alert.message }
+                     </div>
+                   </Alert>
+    // Make sure you don't show a fading out alert box on the initial web-page load.
+    if (!alert.message)
+      alertBox = ''
+    return (
+      <div className="login">
+        { alertBox }
+        <div className="l-wrap">
+          <form onSubmit={ this.handleSubmit.bind(this) }>
+            <input name="fixBrowser"
+              autoComplete="username"
+              type="text"
+              style={ { display: 'none' } } />
+            <InputGroup className="ig-dark"
+              label="Access Key"
+              id="accessKey"
+              name="username"
+              type="text"
+              spellCheck="false"
+              required="required"
+              autoComplete="username">
+            </InputGroup>
+            <input type="text" autoComplete="new-password" style={ { display: 'none' } } />
+            <InputGroup className="ig-dark"
+              label="Secret Key"
+              id="secretKey"
+              name="password"
+              type="password"
+              spellCheck="false"
+              required="required"
+              autoComplete="new-password">
+            </InputGroup>
+            <button className="lw-btn" type="submit">
+              <i className="fa fa-sign-in"></i>
+            </button>
+          </form>
+        </div>
+        <div className="l-footer">
+          <a className="lf-logo" href=""><img src={ logo } alt="" /></a>
+          <div className="lf-server">
+            { window.location.host }
+          </div>
+        </div>
+      </div>
+    )
+  }
 }
 
 Login.contextTypes = {
-    router: React.PropTypes.object.isRequired
+  router: React.PropTypes.object.isRequired
 }

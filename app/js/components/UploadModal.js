@@ -29,103 +29,113 @@ import * as actions from '../actions'
 // abort modal if the user decides to abort the uploads.
 class UploadModal extends React.Component {
 
-    // Abort all the current uploads.
-    abortUploads(e) {
-        e.preventDefault()
-        const { dispatch, uploads } = this.props
+  // Abort all the current uploads.
+  abortUploads(e) {
+    e.preventDefault()
+    const {dispatch, uploads} = this.props
 
-        for (var slug in uploads) {
-            let upload = uploads[slug]
-
-            upload.xhr.abort()
-            dispatch(actions.stopUpload({ slug }))
-        }
-
-        this.hideAbort(e)
+    for (var slug in uploads) {
+      let upload = uploads[slug]
+      upload.xhr.abort()
+      dispatch(actions.stopUpload({
+        slug
+      }))
     }
 
-    // Show the abort modal instead of the progress modal.
-    showAbort(e) {
-        e.preventDefault()
-        const { dispatch } = this.props
+    this.hideAbort(e)
+  }
 
-        dispatch(actions.setShowAbortModal(true))
+  // Show the abort modal instead of the progress modal.
+  showAbort(e) {
+    e.preventDefault()
+    const {dispatch} = this.props
+
+    dispatch(actions.setShowAbortModal(true))
+  }
+
+  // Show the progress modal instead of the abort modal.
+  hideAbort(e) {
+    e.preventDefault()
+    const {dispatch} = this.props
+
+    dispatch(actions.setShowAbortModal(false))
+  }
+
+  render() {
+    const {uploads, showAbortModal} = this.props
+
+    // Show the abort modal.
+    if (showAbortModal) {
+      let baseClass = classNames({
+        'abort-upload': true
+      })
+      let okIcon = classNames({
+        'fa': true,
+        'fa-times': true
+      })
+      let cancelIcon = classNames({
+        'fa': true,
+        'fa-cloud-upload': true
+      })
+
+      return (
+        <ConfirmModal show={ true }
+          baseClass={ baseClass }
+          text='Abort uploads in progress?'
+          icon='fa fa-info-circle mci-amber'
+          sub='This cannot be undone!'
+          okText='Abort'
+          okIcon={ okIcon }
+          cancelText='Upload'
+          cancelIcon={ cancelIcon }
+          okHandler={ this.abortUploads.bind(this) }
+          cancelHandler={ this.hideAbort.bind(this) }>
+        </ConfirmModal>
+      )
     }
 
-    // Show the progress modal instead of the abort modal.
-    hideAbort(e) {
-        e.preventDefault()
-        const { dispatch } = this.props
+    // If we don't have any files uploading, don't show anything.
+    let numberUploading = Object.keys(uploads).length
+    if (numberUploading == 0)
+      return ( <noscript></noscript> )
 
-        dispatch(actions.setShowAbortModal(false))
+    let totalLoaded = 0
+    let totalSize = 0
+
+    // Iterate over each upload, adding together the total size and that
+    // which has been uploaded.
+    for (var slug in uploads) {
+      let upload = uploads[slug]
+      totalLoaded += upload.loaded
+      totalSize += upload.size
     }
 
-    render() {
-        const { uploads, showAbortModal } = this.props
+    let percent = (totalLoaded / totalSize) * 100
 
-        // Show the abort modal.
-        if (showAbortModal) {
-            let baseClass = classNames({'abort-upload': true})
-            let okIcon = classNames({'fa': true, 'fa-times': true})
-            let cancelIcon = classNames({'fa': true, 'fa-cloud-upload': true})
+    // If more than one: "Uploading files (5)..."
+    // If only one: "Uploading myfile.txt..."
+    let text = 'Uploading ' + (numberUploading == 1 ? `'${uploads[Object.keys(uploads)[0]].name}'` : `files (${numberUploading})`) + '...'
 
-            return (
-                <ConfirmModal
-                    show={true}
-                    baseClass={baseClass}
-                    text='Abort uploads in progress?'
-                    icon='fa fa-info-circle mci-amber'
-                    sub='This cannot be undone!'
-                    okText='Abort'
-                    okIcon={okIcon}
-                    cancelText='Upload'
-                    cancelIcon={cancelIcon}
-                    okHandler={this.abortUploads.bind(this)}
-                    cancelHandler={this.hideAbort.bind(this)}>
-                </ConfirmModal>
-            )
-        }
-
-        // If we don't have any files uploading, don't show anything.
-        let numberUploading = Object.keys(uploads).length
-        if (numberUploading == 0)
-            return ( <noscript></noscript> )
-
-        let totalLoaded = 0
-        let totalSize = 0
-
-        // Iterate over each upload, adding together the total size and that
-        // which has been uploaded.
-        for (var slug in uploads) {
-            let upload = uploads[slug]
-
-            totalLoaded += upload.loaded
-            totalSize += upload.size
-        }
-
-        let percent = (totalLoaded / totalSize) * 100
-
-        // If more than one: "Uploading files (5)..."
-        // If only one: "Uploading myfile.txt..."
-        let text = 'Uploading ' + (numberUploading == 1 ? `'${uploads[Object.keys(uploads)[0]].name}'` : `files (${numberUploading})`) + '...'
-
-        return (
-            <div className="alert alert-info progress animated fadeInUp ">
-                <button type="button" className="close" onClick={this.showAbort.bind(this)}>
-                    <span>&times;</span>
-                </button>
-                <div className="text-center">
-                    <small>{text}</small>
-                </div>
-                <ProgressBar now={percent}/>
-                <div className="text-center">
-                    <small>{humanize.filesize(totalLoaded)} ({percent.toFixed(2)} %)</small>
-                </div>
-            </div>
-        )
-    }
+    return (
+      <div className="alert alert-info progress animated fadeInUp ">
+        <button type="button" className="close" onClick={ this.showAbort.bind(this) }>
+          <span>×</span>
+        </button>
+        <div className="text-center">
+          <small>{ text }</small>
+        </div>
+        <ProgressBar now={ percent } />
+        <div className="text-center">
+          <small>{ humanize.filesize(totalLoaded) } ({ percent.toFixed(2) } %)</small>
+        </div>
+      </div>
+    )
+  }
 }
 
 export default connect(state => {
-    return { uploads: state.uploads, showAbortModal: state.showAbortModal }
+  return {
+    uploads: state.uploads,
+    showAbortModal: state.showAbortModal
+  }
 })(UploadModal)

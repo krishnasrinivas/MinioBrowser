@@ -29,23 +29,23 @@ export default class JSONrpc {
     this.port = parsedUrl.port
 
     switch (parsedUrl.protocol) {
-    case 'http:': {
-      this.scheme = 'http'
-      if (parsedUrl.port === 0) {
-        this.port = 80
+      case 'http:': {
+        this.scheme = 'http'
+        if (parsedUrl.port === 0) {
+          this.port = 80
+        }
+        break
       }
-      break
-    }
-    case 'https:': {
-      this.scheme = 'https'
-      if (parsedUrl.port === 0) {
-        this.port = 443
+      case 'https:': {
+        this.scheme = 'https'
+        if (parsedUrl.port === 0) {
+          this.port = 443
+        }
+        break
       }
-      break
-    }
-    default: {
-      throw new Error('Unknown protocol: ' + parsedUrl.protocol)
-    }
+      default: {
+        throw new Error('Unknown protocol: ' + parsedUrl.protocol)
+      }
     }
   }
   // call('Get', {id: NN, params: [...]}, function() {})

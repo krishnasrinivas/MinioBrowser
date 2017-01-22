@@ -18,25 +18,21 @@ import React from 'react'
 import connect from 'react-redux/lib/components/connect'
 
 let Path = ({currentBucket, currentPath, selectPrefix}) => {
-    let dirPath = []
-    let path = currentPath.split('/').map((dir, i) => {
-        dirPath.push(dir)
-        let dirPath_ = dirPath.join('/') + '/'
-        return <span key={i}><a href="" onClick={(e) => selectPrefix(e, dirPath_)}>{dir}</a></span>
-    })
+  let dirPath = []
+  let path = currentPath.split('/').map((dir, i) => {
+    dirPath.push(dir)
+    let dirPath_ = dirPath.join('/') + '/'
+    return <span key={ i }><a href="" onClick={ (e) => selectPrefix(e, dirPath_) }>{ dir }</a></span>
+  })
 
-    return (
-        <h2>
-            <span className="main">
-               <a onClick={(e) => selectPrefix(e, '')} href="">
-                  {currentBucket}
-               </a>
-            </span>
-            {path}
-        </h2>
-    )
+  return (
+    <h2><span className="main"><a onClick={ (e) => selectPrefix(e, '') } href="">{ currentBucket }</a></span> { path }</h2>
+  )
 }
 
 export default connect(state => {
-    return { currentBucket: state.currentBucket, currentPath: state.currentPath }
+  return {
+    currentBucket: state.currentBucket,
+    currentPath: state.currentPath
+  }
 })(Path)

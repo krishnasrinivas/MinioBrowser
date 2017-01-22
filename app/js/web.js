@@ -22,53 +22,55 @@ import Moment from 'moment'
 import storage from 'local-storage-fallback'
 
 export default class Web {
-  constructor(endpoint,  dispatch) {
+  constructor(endpoint, dispatch) {
     const namespace = 'Web'
     this.dispatch = dispatch
     this.JSONrpc = new JSONrpc({
-      endpoint, namespace
+      endpoint,
+      namespace
     })
   }
   makeCall(method, options) {
     return this.JSONrpc.call(method, {
       params: options
     }, storage.getItem('token'))
-    .catch(err => {
-      if (err.status === 401) {
-        storage.removeItem('token')
-        browserHistory.push(`${minioBrowserPrefix}/login`)
-        throw new Error('Please re-login.')
-      }
-      if (err.status) throw new Error(`Server returned error [${err.status}]`)
-      throw new Error('Minio server is unreachable')
-    })
-    .then(res => {
-      let json = JSON.parse(res.text)
-      let result = json.result
-      let error = json.error
-      if (error) {
-        throw new Error(error.message)
-      }
-      if (!Moment(result.uiVersion).isValid()) {
-        throw new Error("Invalid UI version in the JSON-RPC response")
-      }
-      if (result.uiVersion !== currentUiVersion
+      .catch(err => {
+        if (err.status === 401) {
+          storage.removeItem('token')
+          browserHistory.push(`${minioBrowserPrefix}/login`)
+          throw new Error('Please re-login.')
+        }
+        if (err.status)
+          throw new Error(`Server returned error [${err.status}]`)
+        throw new Error('Minio server is unreachable')
+      })
+      .then(res => {
+        let json = JSON.parse(res.text)
+        let result = json.result
+        let error = json.error
+        if (error) {
+          throw new Error(error.message)
+        }
+        if (!Moment(result.uiVersion).isValid()) {
+          throw new Error("Invalid UI version in the JSON-RPC response")
+        }
+        if (result.uiVersion !== currentUiVersion
           && currentUiVersion !== 'MINIO_UI_VERSION') {
-        storage.setItem('newlyUpdated', true)
-        location.reload()
-      }
-      return result
-    })
+          storage.setItem('newlyUpdated', true)
+          location.reload()
+        }
+        return result
+      })
   }
   LoggedIn() {
     return !!storage.getItem('token')
   }
   Login(args) {
     return this.makeCall('Login', args)
-                .then(res => {
-                  storage.setItem('token', `${res.token}`)
-                  return res
-                })
+      .then(res => {
+        storage.setItem('token', `${res.token}`)
+        return res
+      })
   }
   Logout() {
     storage.removeItem('token')
@@ -91,7 +93,7 @@ export default class Web {
   PresignedGet(args) {
     return this.makeCall('PresignedGet', args)
   }
-   PutObjectURL(args) {
+  PutObjectURL(args) {
     return this.makeCall('PutObjectURL', args)
   }
   RemoveObject(args) {
@@ -105,10 +107,10 @@ export default class Web {
   }
   SetAuth(args) {
     return this.makeCall('SetAuth', args)
-                .then(res => {
-                  storage.setItem('token', `${res.token}`)
-                  return res
-                })
+      .then(res => {
+        storage.setItem('token', `${res.token}`)
+        return res
+      })
   }
   GetBucketPolicy(args) {
     return this.makeCall('GetBucketPolicy', args)

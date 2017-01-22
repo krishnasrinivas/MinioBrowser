@@ -28,15 +28,15 @@ const isPdf = (name, contentType) => {
 
 const isZip = (name, contentType) => {
   if (!contentType || !contentType.includes('/')) return false
-  if(contentType.split('/')[1].includes('zip')) return true
+  if (contentType.split('/')[1].includes('zip')) return true
   return false
 }
 
 const isCode = (name, contentType) => {
-  const codeExt =  ['c', 'cpp', 'go', 'py', 'java', 'rb', 'js', 'pl', 'fs',
-                    'php', 'css', 'less', 'scss', 'coffee', 'net', 'html',
-                    'rs', 'exs', 'scala', 'hs', 'clj', 'el', 'scm', 'lisp',
-                    'asp', 'aspx']
+  const codeExt = ['c', 'cpp', 'go', 'py', 'java', 'rb', 'js', 'pl', 'fs',
+    'php', 'css', 'less', 'scss', 'coffee', 'net', 'html',
+    'rs', 'exs', 'scala', 'hs', 'clj', 'el', 'scm', 'lisp',
+    'asp', 'aspx']
   const ext = name.split('.').reverse()[0]
   for (var i in codeExt) {
     if (ext === codeExt[i]) return true
@@ -48,7 +48,6 @@ const isExcel = (name, contentType) => {
   if (!contentType || !contentType.includes('/')) return false
   const types = ['excel', 'spreadsheet']
   const subType = contentType.split('/')[1]
-
   for (var i in types) {
     if (subType.includes(types[i])) return true
   }

@@ -17,14 +17,46 @@
 import * as actions from './actions'
 import { minioBrowserPrefix } from './constants'
 
-export default (state = {buckets:[], visibleBuckets:[], objects:[], storageInfo:{}, serverInfo: {},
-                currentBucket: '', currentPath: '', showMakeBucketModal: false, uploads: {},
-                alert: {show: false, type: 'danger', message: ''}, loginError : false,
-                sortNameOrder: false, sortSizeOrder: false, sortDateOrder: false,
-                latestUiVersion: currentUiVersion, sideBarActive: false,
-                loginRedirectPath: minioBrowserPrefix, settings: {accessKey:'', secretKey: '', secretKeyVisible: false},
-                showSettings: false, policies: [], deleteConfirmation: {object: '', show: false},
-                shareObject: {show: false, url:'', expiry: 604800}, prefixWritable: false }, action) => {
+export default (state = {
+    buckets: [],
+    visibleBuckets: [],
+    objects: [],
+    storageInfo: {},
+    serverInfo: {},
+    currentBucket: '',
+    currentPath: '',
+    showMakeBucketModal: false,
+    uploads: {},
+    alert: {
+      show: false,
+      type: 'danger',
+      message: ''
+    },
+    loginError: false,
+    sortNameOrder: false,
+    sortSizeOrder: false,
+    sortDateOrder: false,
+    latestUiVersion: currentUiVersion,
+    sideBarActive: false,
+    loginRedirectPath: minioBrowserPrefix,
+    settings: {
+      accessKey: '',
+      secretKey: '',
+      secretKeyVisible: false
+    },
+    showSettings: false,
+    policies: [],
+    deleteConfirmation: {
+      object: '',
+      show: false
+    },
+    shareObject: {
+      show: false,
+      url: '',
+      expiry: 604800
+    },
+    prefixWritable: false
+  }, action) => {
   let newState = Object.assign({}, state)
   switch (action.type) {
     case actions.SET_WEB:
@@ -79,7 +111,9 @@ export default (state = {buckets:[], visibleBuckets:[], objects:[], storageInfo:
     case actions.SET_ALERT:
       if (newState.alert.alertTimeout) clearTimeout(newState.alert.alertTimeout)
       if (!action.alert.show) {
-        newState.alert = Object.assign({}, newState.alert, {show: false})
+        newState.alert = Object.assign({}, newState.alert, {
+          show: false
+        })
       } else {
         newState.alert = action.alert
       }
